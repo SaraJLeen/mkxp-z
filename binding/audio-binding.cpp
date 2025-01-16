@@ -24,6 +24,32 @@
 #include "binding-util.h"
 #include "exception.h"
 
+#define DEF_PLAY_STOP_POS_FADE(entity) \
+	RB_METHOD_GUARD(audio_##entity##Play) \
+	{ \
+		RB_UNUSED_PARAM; \
+		const char *filename; \
+		int volume = 100; \
+		int pitch = 100; \
+		double pos = 0.0; \
+		bool fade = true; \
+        rb_get_args(argc, argv, "z|iifb", &filename, &volume, &pitch, &pos, &fade RB_ARG_END); \
+		GUARD_EXC( shState->audio().entity##Play(filename, volume, pitch, pos, fade); ) \
+		return Qnil; \
+	} \
+	RB_METHOD_GUARD_END \
+	RB_METHOD(audio_##entity##Stop) \
+	{ \
+		RB_UNUSED_PARAM; \
+		shState->audio().entity##Stop(); \
+		return Qnil; \
+	} \
+	RB_METHOD(audio_##entity##Pos) \
+	{ \
+		RB_UNUSED_PARAM; \
+		return rb_float_new(shState->audio().entity##Pos()); \
+	}
+
 #define DEF_PLAY_STOP_POS(entity) \
 	RB_METHOD_GUARD(audio_##entity##Play) \
 	{ \
@@ -96,9 +122,10 @@ RB_METHOD_GUARD(audio_bgmPlay)
     int volume = 100;
     int pitch = 100;
     double pos = 0.0;
+    bool fade = true;
     VALUE track = Qnil;
-    rb_get_args(argc, argv, "z|iifo", &filename, &volume, &pitch, &pos, &track RB_ARG_END);
-    shState->audio().bgmPlay(filename, volume, pitch, pos, MAYBE_NIL_TRACK(track));
+    rb_get_args(argc, argv, "z|iifbo", &filename, &volume, &pitch, &pos, &fade, &track RB_ARG_END);
+    shState->audio().bgmPlay(filename, volume, pitch, pos, fade, MAYBE_NIL_TRACK(track));
     return Qnil;
 }
 RB_METHOD_GUARD_END

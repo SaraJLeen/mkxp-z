@@ -109,6 +109,10 @@ struct SharedFontStatePrivate
     /* Internal default font family that is used anytime an
      * empty/invalid family is requested */
     std::string defaultFamily;
+
+	int fontSizeMethod;
+	float fontScale;
+	bool fontKerning;
 };
 
 SharedFontState::SharedFontState(const Config &conf)
@@ -129,6 +133,24 @@ SharedFontState::SharedFontState(const Config &conf)
 
 		p->subs.insert(from, to);
 	}
+	
+	p->fontSizeMethod = conf.fontSizeMethod;
+	if (!p->fontSizeMethod)
+	{
+		if (rgssVer == 1)
+			p->fontSizeMethod = 1;
+		else
+			p->fontSizeMethod = 2;
+	}
+	p->fontScale = conf.fontScale;
+	if (p->fontScale < 0.1f)
+	{
+		if (p->fontSizeMethod == 1)
+			p->fontScale = 0.9f;
+		else
+			p->fontScale = 1.0f;
+	}
+	p->fontKerning = conf.fontKerning;
 }
 
 SharedFontState::~SharedFontState()
@@ -158,9 +180,9 @@ void SharedFontState::initFontSetCB(SDL_RWops &ops,
 
 	FontSet &set = p->sets[family];
 
-	if (style == "Regular")
+	if (style == "Regular" && set.regular.empty())
 		set.regular = filename;
-	else
+	else if (style != "Regular" && set.other.empty())
 		set.other = filename;
 }
 
@@ -209,16 +231,65 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 		                 ? req.regular.c_str() : req.other.c_str();
 
 		ops = SDL_AllocRW();
-		shState->fileSystem().openReadRaw(*ops, path, true);
+		try{
+			shState->fileSystem().openReadRaw(*ops, path, true);
+		} catch (const Exception &e) {
+			SDL_FreeRW(ops);
+			throw e;
+		}
 	}
 
-	// FIXME 0.9 is guesswork at this point
-//	float gamma = (96.0/45.0)*(5.0/14.0)*(size-5);
-//	font = TTF_OpenFontRW(ops, 1, gamma /** .90*/);
-	font = TTF_OpenFontRW(ops, 1, size* 0.90f);
+	size = std::max<int>(size * p->fontScale, 5);
 
-	if (!font)
-		throw Exception(Exception::SDLError, "%s", SDL_GetError());
+	// Pokemon Essentials games were made with the old font size method in mind,
+	// so we default to it for all XP games.
+	if(p->fontSizeMethod == 1)
+	{
+		// FIXME 0.9 is guesswork at this point
+//		float gamma = (96.0/45.0)*(5.0/14.0)*(size-5);
+//		font = TTF_OpenFontRW(ops, 1, gamma /** .90*/);
+//		font = TTF_OpenFontRW(ops, 1, size* 0.90f);
+		font = TTF_OpenFontRW(ops, 1, size);
+
+		if (!font)
+			throw Exception(Exception::SDLError, "%s", SDL_GetError());
+	}
+	else
+	{
+		// freetype's default dpi is 72
+		int dpi = 72;
+		font = TTF_OpenFontDPIRW(ops, 1, size, dpi, dpi);
+
+		if (!font)
+			throw Exception(Exception::SDLError, "%s", SDL_GetError());
+
+		/* Is the font dpi scalable?
+		 * This is should always be true, but we may as well check... */
+		int h = TTF_FontHeight(font);
+		TTF_SetFontSizeDPI(font, size, dpi * 2, dpi * 2);
+		if (h != TTF_FontHeight(font))
+		{
+			TTF_SetFontSizeDPI(font, size, dpi, dpi);
+			
+			// Figure out the dpi needed. It varies by font.
+			// There can be more than one for a given height, which potentially have different widths,
+			// but the range shrinks toward the biggest one as the size gets bigger
+			// Using the biggest one
+			while(TTF_FontHeight(font) <= size)
+			{
+				++dpi;
+				TTF_SetFontSizeDPI(font, size, dpi, dpi);
+			}
+			while(TTF_FontHeight(font) > size)
+			{
+				--dpi;
+				TTF_SetFontSizeDPI(font, size, dpi, dpi);
+			}
+		}
+	}
+
+	if (!p->fontKerning)
+		TTF_SetFontKerning(font, 0);
 
 	p->pool.insert(key, font);
 
@@ -473,7 +544,7 @@ void Font::initDynAttribs()
 {
 	p->color = new Color(p->colorTmp);
 
-	if (rgssVer >= 3)
+	//if (rgssVer >= 3)
 		p->outColor = new Color(p->outColorTmp);;
 }
 
@@ -481,7 +552,7 @@ void Font::initDefaultDynAttribs()
 {
 	FontPrivate::defaultColor = new Color(FontPrivate::defaultColorTmp);
 
-	if (rgssVer >= 3)
+	//if (rgssVer >= 3)
 		FontPrivate::defaultOutColor = new Color(FontPrivate::defaultOutColorTmp);
 }
 
@@ -505,6 +576,7 @@ void Font::initDefaults(const SharedFontState &sfs)
 	default:
 	case 3 :
 		names.push_back("VL Gothic");
+		FontPrivate::defaultSize = 24;
 	}
 
 	setDefaultName(names, sfs);

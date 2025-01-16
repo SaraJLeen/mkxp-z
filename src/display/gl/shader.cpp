@@ -51,6 +51,7 @@
 #ifdef MKXPZ_SSL
 #include "xbrz.frag.xxd"
 #endif
+#include "area.frag.xxd"
 #include "minimal.vert.xxd"
 #include "simple.vert.xxd"
 #include "simpleColor.vert.xxd"
@@ -532,7 +533,10 @@ SpriteShader::SpriteShader()
 	GET_U(tone);
 	GET_U(color);
 	GET_U(opacity);
-	GET_U(bushDepth);
+	GET_U(bushY);
+	GET_U(bushUnder);
+	GET_U(bushSlope);
+	GET_U(bushIntercept);
 	GET_U(bushOpacity);
     GET_U(pattern);
     GET_U(patternBlendType);
@@ -565,9 +569,12 @@ void SpriteShader::setOpacity(float value)
 	gl.Uniform1f(u_opacity, value);
 }
 
-void SpriteShader::setBushDepth(float value)
+void SpriteShader::setBushDepth(bool bushY, bool bushUnder, float bushSlope, float bushIntercept)
 {
-	gl.Uniform1f(u_bushDepth, value);
+	gl.Uniform1f(u_bushY, bushY);
+	gl.Uniform1f(u_bushUnder, bushUnder);
+	gl.Uniform1f(u_bushSlope, bushSlope);
+	gl.Uniform1f(u_bushIntercept, bushIntercept);
 }
 
 void SpriteShader::setBushOpacity(float value)
@@ -869,3 +876,21 @@ void XbrzShader::setTargetScale(const Vec2 &value)
 	gl.Uniform2f(u_targetScale, value.x, value.y);
 }
 #endif
+
+AreaShader::AreaShader()
+{
+	INIT_SHADER(simple, area, AreaShader);
+
+	ShaderBase::init();
+
+	GET_U(texOffsetX);
+	GET_U(sourceSize);
+	GET_U(targetSize);
+	GET_U(targetSizeInv);
+}
+
+void AreaShader::setTargetSize(const Vec2 &value)
+{
+	gl.Uniform2f(u_targetSize, value.x, value.y);
+	gl.Uniform2f(u_targetSizeInv, 1.f / value.x, 1.f / value.y);
+}

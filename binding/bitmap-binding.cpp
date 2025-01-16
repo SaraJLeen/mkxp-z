@@ -639,8 +639,8 @@ RB_METHOD_GUARD(bitmapAddFrame){
     rb_scan_args(argc, argv, "11", &srcBitmap, &position);
     
     Bitmap *src = getPrivateDataCheck<Bitmap>(srcBitmap, BitmapType);
-    if (!src)
-        raiseDisposedAccess(srcBitmap);
+    //if (!src)
+    //    raiseDisposedAccess(srcBitmap);
     
     Bitmap *b = getPrivateData<Bitmap>(self);
     

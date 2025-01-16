@@ -1275,7 +1275,8 @@ void Graphics::transition(int duration, const char *filename, int vague) {
         shader.setFrozenScene(p->frozenScene.tex);
         shader.setCurrentScene(currentScene.tex);
         if (transMap->hasHires()) {
-            Debug() << "BUG: High-res Graphics transMap not implemented";
+            //Sara
+            //Debug() << "BUG: High-res Graphics transMap not implemented";
         }
         shader.setTransMap(transMap->getGLTypes().tex);
         shader.setVague(vague / 256.0f);
@@ -1541,7 +1542,8 @@ bool Graphics::updateMovieInput(Movie *movie) {
 
 void Graphics::playMovie(const char *filename, int volume_, bool skippable) {
     if (shState->config().enableHires) {
-        Debug() << "BUG: High-res Graphics playMovie not implemented";
+        //Sara
+        //Debug() << "BUG: High-res Graphics playMovie not implemented";
     }
 
     Movie *movie = new Movie(skippable);
@@ -1717,7 +1719,19 @@ double Graphics::getScale() const {
 
 void Graphics::setScale(double factor) {
     p->threadData->rqWindowAdjust.wait();
-    factor = clamp(factor, 0.5, 4.0);
+    
+    int displayIndex = SDL_GetWindowDisplayIndex(shState->sdlWindow());
+    SDL_Rect displayRect;
+    SDL_GetDisplayUsableBounds(displayIndex, &displayRect);
+    
+    int top, bottom, left, right;
+    SDL_GetWindowBordersSize(shState->sdlWindow(), &top, &bottom, &left, &right);
+    
+    double maxWidth = displayRect.w;
+    double maxHeight = displayRect.h - top;
+    double maxScale = std::min(maxWidth / p->scRes.x, maxHeight / p->scRes.y);
+    
+    factor = clamp(factor, 0.5, maxScale);
     
     if (factor == getScale())
         return;

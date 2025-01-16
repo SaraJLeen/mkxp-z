@@ -319,7 +319,8 @@ struct WindowPrivate
 		int w = size.x;
 		int h = size.y;
 
-		IntRect bgRect(2, 2, w - 4, h - 4);
+		//IntRect bgRect(2, 2, w - 4, h - 4);
+		IntRect bgRect(0, 0, w, h);
 
 		Sides<IntRect> borderRects;
 		borderRects.l = IntRect(0,    8,    16,   h-16);

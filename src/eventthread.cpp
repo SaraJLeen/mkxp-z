@@ -88,6 +88,7 @@ EventThread::ControllerState EventThread::controllerState;
 EventThread::MouseState EventThread::mouseState;
 EventThread::TouchState EventThread::touchState;
 SDL_atomic_t EventThread::verticalScrollDistance;
+SourceDesc lastInputDesc;
 
 /* User event codes */
 enum
@@ -407,7 +408,9 @@ void EventThread::process(RGSSThreadData &rtData)
                     break;
                 }
                 
-                keyStates[event.key.keysym.scancode] = true;
+                keyStates[event.key.keysym.scancode] = true;                
+                lastInputDesc.type = Key;
+                lastInputDesc.d.scan = event.key.keysym.scancode;
                 break;
                 
             case SDL_KEYUP :
@@ -426,6 +429,8 @@ void EventThread::process(RGSSThreadData &rtData)
                 
             case SDL_CONTROLLERBUTTONDOWN:
                 controllerState.buttons[event.cbutton.button] = true;
+                lastInputDesc.type = CButton;
+                lastInputDesc.d.cb = (SDL_GameControllerButton) event.cbutton.button;
                 break;
                 
             case SDL_CONTROLLERBUTTONUP:
@@ -434,6 +439,9 @@ void EventThread::process(RGSSThreadData &rtData)
                 
             case SDL_CONTROLLERAXISMOTION:
                 controllerState.axes[event.caxis.axis] = event.caxis.value;
+                lastInputDesc.type = CAxis;
+                lastInputDesc.d.ca.axis = (SDL_GameControllerAxis) event.caxis.axis;
+                lastInputDesc.d.ca.dir = event.caxis.value < 0 ? Negative : Positive;
                 break;
                 
             case SDL_CONTROLLERDEVICEADDED:
@@ -491,10 +499,30 @@ void EventThread::process(RGSSThreadData &rtData)
                         break;
                         
                     case REQUEST_WINRESIZE :
-                        SDL_SetWindowSize(win, event.window.data1, event.window.data2);
+                    {
+                        int displayIndex = SDL_GetWindowDisplayIndex(shState->sdlWindow());
+                        SDL_Rect displayRect;
+                        SDL_GetDisplayUsableBounds(displayIndex, &displayRect);
+                        int top, bottom, left, right;
+                        SDL_GetWindowBordersSize(shState->sdlWindow(), &top, &bottom, &left, &right);
+                        int maxWidth = displayRect.w;
+                        int maxHeight = displayRect.h - top;
+                        
+                        int x, y;
+                        SDL_GetWindowPosition(win, &x, &y);
+                        
+                        int newWidth = std::min(event.window.data1, maxWidth);
+                        int newHeight = std::min(event.window.data2, maxHeight);
+                        
+                        SDL_SetWindowSize(win, newWidth, newHeight);
+                        // Adjust the position to have the same center,
+                        // but don't let it go past the top of the screen.
+                        SDL_SetWindowPosition(win,
+                                              x + ((winW - newWidth)/2),
+                                              std::max(y + ((winH - newHeight)/2), displayRect.y + top));
                         rtData.rqWindowAdjust.clear();
                         break;
-                        
+                    }
                     case REQUEST_WINREPOSITION :
                         SDL_SetWindowPosition(win, event.window.data1, event.window.data2);
                         rtData.rqWindowAdjust.clear();
@@ -503,9 +531,16 @@ void EventThread::process(RGSSThreadData &rtData)
                     case REQUEST_WINCENTER :
                         rc = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(win), &dm);
                         if (!rc)
+                        {
+                            int displayIndex = SDL_GetWindowDisplayIndex(shState->sdlWindow());
+                            SDL_Rect displayRect;
+                            SDL_GetDisplayUsableBounds(displayIndex, &displayRect);
+                            int top, bottom, left, right;
+                            SDL_GetWindowBordersSize(shState->sdlWindow(), &top, &bottom, &left, &right);
                             SDL_SetWindowPosition(win,
-                                                  (dm.w / 2) - (winW / 2),
-                                                  (dm.h / 2) - (winH / 2));
+                                                  displayRect.x + ((displayRect.w - winW) / 2),
+                                                  displayRect.y + ((displayRect.h + top - winH) / 2));
+                        }
                         rtData.rqWindowAdjust.clear();
                         break;
                         
@@ -862,6 +897,16 @@ void EventThread::notifyGameScreenChange(const SDL_Rect &screen)
 void EventThread::lockText(bool lock)
 {
     lock ? SDL_LockMutex(textInputLock) : SDL_UnlockMutex(textInputLock);
+}
+
+const SourceDesc EventThread::getLastInput()
+{
+    return lastInputDesc;
+}
+
+void EventThread::clearLastInput()
+{
+    lastInputDesc.type = Invalid;
 }
 
 void SyncPoint::haltThreads()

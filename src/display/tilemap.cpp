@@ -569,7 +569,8 @@ struct TilemapPrivate
 			int blitH = std::min(atH, autotileH);
 
 			if (autotile->hasHires()) {
-				Debug() << "BUG: High-res Tilemap blit autotiles not implemented";
+                                //Sara
+				//Debug() << "BUG: High-res Tilemap blit autotiles not implemented";
 			}
 
 			GLMeta::blitSource(autotile->getGLTypes());
@@ -662,7 +663,8 @@ struct TilemapPrivate
 		else
 		{
 			if (tileset->hasHires()) {
-				Debug() << "BUG: High-res Tilemap regular tileset not implemented";
+                                //Sara
+				//Debug() << "BUG: High-res Tilemap regular tileset not implemented";
 			}
 
 			/* Regular tileset */
