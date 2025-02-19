@@ -170,6 +170,9 @@ struct Config {
     /* Internal */
     std::string customDataPath;
     
+
+    std::vector<double> axisDeadzone;
+
     Config();
     
     bool fontIsSolid(const char *fontName) const;
