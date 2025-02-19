@@ -440,6 +440,8 @@ void EventThread::process(RGSSThreadData &rtData)
             case SDL_CONTROLLERAXISMOTION:
             	if(std::abs(event.caxis.value) > rtData.config.axisDeadzone[event.caxis.axis] * 32767)
                 	controllerState.axes[event.caxis.axis] = event.caxis.value;
+                else
+                	controllerState.axes[event.caxis.axis] = 0;
                 // Take deadzone into account when storing last input
                 // This is based on percentage, so multiply by the max value
                 if(std::abs(event.caxis.value) > rtData.config.axisDeadzone[event.caxis.axis] * 32767) {
