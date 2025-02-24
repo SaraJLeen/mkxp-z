@@ -164,12 +164,12 @@ jobs:
             arch_gcc: s390x-linux-gnu
             # src/util/serial-util.h errors on big-endian targets.
             experimental: true
-          - arch_mkxpz: riscv64
-            arch_debian: riscv64
-            arch_gcc: riscv64-linux-gnu
+#          - arch_mkxpz: riscv64
+#            arch_debian: riscv64
+#            arch_gcc: riscv64-linux-gnu
             # libjxl/highway compatibility issue, TODO check if fixed in later SDL_image.
             # Also probably an OpenSSL arch name issue, which might be fixed by now.
-            experimental: true
+#            experimental: true
     steps:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
