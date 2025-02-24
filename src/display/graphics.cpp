@@ -1614,6 +1614,17 @@ void Graphics::reset() {
     
     setFrameRate(DEF_FRAMERATE);
     setBrightness(255);
+
+    //Don't lose non-runtime FPS settings after an F12 reset -- Sara
+    if (p->threadData->config.syncToRefreshrate) {
+        p->frameRate = p->threadData->refreshRate;
+        p->fpsLimiter.disabled = true;
+    } else if (p->threadData->config.fixedFramerate > 0) {
+        p->fpsLimiter.setDesiredFPS(p->threadData->config.fixedFramerate);
+    } else if (p->threadData->config.fixedFramerate < 0) {
+        p->fpsLimiter.disabled = true;
+    }
+
     
     // Always update at least once to clear the screen
     if (p->threadData->rqResetFinish)
