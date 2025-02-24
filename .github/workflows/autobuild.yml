@@ -14,7 +14,7 @@ jobs:
     name: Windows
     runs-on: windows-latest
     steps:
-      - uses: benjlevesque/short-sha@v2.2
+      - uses: benjlevesque/short-sha@v3.0
         id: short-sha
         with:
           length: 7
@@ -65,6 +65,10 @@ jobs:
           cp /mingw64/bin/zlib1.dll .
           cp ../../windows/build-mingw64/bin/x64-msvcrt-ruby310.dll .
           cp -r ../../windows/build-mingw64/lib/ruby/3.1.0 .
+          cp ../../vendor/ANGLE/libEGL.dll .
+          cp ../../vendor/ANGLE/libGLESv2.dll .
+          cp ../../vendor/ANGLE/vulkan-1.dll .
+          cp ../../vendor/ANGLE/COPYING ./COPYING_ANGLE
           mv ./3.1.0 ./stdlib
           cp ../mkxp-z.exe .
           cp ../../mkxp.json .
@@ -74,13 +78,17 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: mkxp-z.windows.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
-          path: build/artifact
+          path: |
+            build/artifact/*.dll
+            build/artifact/*.exe
+            build/artifact/mkxp.json
+            build/artifact/stdlib/
 
   build-linux-native:
     name: Ubuntu 22.04 x86_64
     runs-on: ubuntu-22.04
     steps:
-      - uses: benjlevesque/short-sha@v2.2
+      - uses: benjlevesque/short-sha@v3.0
         id: short-sha
         with:
           length: 7
@@ -119,8 +127,12 @@ jobs:
           cp -r ../../linux/build-x86_64/lib/ruby/3.1.0 .
           mv ./3.1.0 ./stdlib
           cp ../../mkxp.json .
+          cp ../../vendor/ANGLE/libGLESv2.so ./lib64
+          cp ../../vendor/ANGLE/libEGL.so.1 ./lib64
+          cp ../../vendor/ANGLE/libvulkan.so.1 ./lib64
           cp -r ../../scripts .
           cp ../../assets/LICENSE.mkxp-z-with-https.txt .
+          cd ..
 
       - uses: actions/upload-artifact@v4
         with:
@@ -227,6 +239,9 @@ jobs:
           cp ../../mkxp.json .
           cp -r ../../scripts .
           cp ../../assets/LICENSE.mkxp-z-with-https.txt .
+          cp ../../vendor/ANGLE/libGLESv2.so ./lib64
+          cp ../../vendor/ANGLE/libEGL.so.1 ./lib64
+          cp ../../vendor/ANGLE/libvulkan.so.1 ./lib64
 
       - uses: actions/upload-artifact@v4
         with:
@@ -237,7 +252,7 @@ jobs:
     name: macOS
     runs-on: macos-latest
     steps:
-      - uses: benjlevesque/short-sha@v2.2
+      - uses: benjlevesque/short-sha@v3.0
         id: short-sha
         with:
           length: 7

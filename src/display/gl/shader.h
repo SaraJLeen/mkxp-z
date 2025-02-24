@@ -366,17 +366,18 @@ protected:
 };
 #endif
 
-class AreaShader : public Lanczos3Shader
-{
-public:
-	AreaShader();
-
-	void setTargetSize(const Vec2 &value);
-
-protected:
-	GLint u_targetSize;
-	GLint u_targetSizeInv;
-};
+//vulkan default changes
+//class AreaShader : public Lanczos3Shader
+//{
+//public:
+//	AreaShader();
+//
+//	void setTargetSize(const Vec2 &value);
+//
+//protected:
+//	GLint u_targetSize;
+//	GLint u_targetSizeInv;
+//};
 
 class Lanczos3SpriteShader : public SimpleSpriteShader
 {
@@ -437,7 +438,8 @@ struct ShaderSet
 #ifdef MKXPZ_SSL
 	XbrzShader xbrz;
 #endif
-	AreaShader area;
+	//vulkan default changes
+	//AreaShader area;
 	Lanczos3SpriteShader lanczos3Sprite;
 	BicubicSpriteShader bicubicSprite;
 #ifdef MKXPZ_SSL

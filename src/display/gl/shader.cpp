@@ -51,7 +51,8 @@
 #ifdef MKXPZ_SSL
 #include "xbrz.frag.xxd"
 #endif
-#include "area.frag.xxd"
+//vulkan default changes
+//#include "area.frag.xxd"
 #include "minimal.vert.xxd"
 #include "simple.vert.xxd"
 #include "simpleColor.vert.xxd"
@@ -877,20 +878,21 @@ void XbrzShader::setTargetScale(const Vec2 &value)
 }
 #endif
 
-AreaShader::AreaShader()
-{
-	INIT_SHADER(simple, area, AreaShader);
+//vulkan default changes
+//AreaShader::AreaShader()
+//{
+//	INIT_SHADER(simple, area, AreaShader);
+//
+//	ShaderBase::init();
+//
+//	GET_U(texOffsetX);
+//	GET_U(sourceSize);
+//	GET_U(targetSize);
+//	GET_U(targetSizeInv);
+//}
 
-	ShaderBase::init();
-
-	GET_U(texOffsetX);
-	GET_U(sourceSize);
-	GET_U(targetSize);
-	GET_U(targetSizeInv);
-}
-
-void AreaShader::setTargetSize(const Vec2 &value)
-{
-	gl.Uniform2f(u_targetSize, value.x, value.y);
-	gl.Uniform2f(u_targetSizeInv, 1.f / value.x, 1.f / value.y);
-}
+//void AreaShader::setTargetSize(const Vec2 &value)
+//{
+//	gl.Uniform2f(u_targetSize, value.x, value.y);
+//	gl.Uniform2f(u_targetSizeInv, 1.f / value.x, 1.f / value.y);
+//}

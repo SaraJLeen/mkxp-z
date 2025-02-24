@@ -209,7 +209,8 @@ enum InterpolationMethod
 #ifdef MKXPZ_SSL
 	xBRZ = 4,
 #endif
-	Area = 5,
+    //vulkan default changes
+	//Area = 5,
 };
 
 enum SpecialScale

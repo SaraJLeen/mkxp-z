@@ -36,7 +36,9 @@ struct Config {
     
     bool debugMode;
     bool winConsole;
-    bool preferMetalRenderer;
+    //vulkan default changes
+    //bool preferMetalRenderer;
+    std::string angleRenderer;
     bool displayFPS;
     bool printFPS;
     

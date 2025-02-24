@@ -240,17 +240,17 @@ static void _blitBegin(FBO::ID fbo, const Vec2i &size, int scaleIsSpecial)
 
 			break;
 #endif
-		case Area:
-		{
-			AreaShader &shader = shState->shaders().area;
-			shader.bind();
-			shader.applyViewportProj();
-			shader.setTranslation(Vec2i());
-			shader.setTexSize(Vec2i(size.x, size.y));
-			shader.setTargetSize(Vec2(size.x, size.y)); // Dummy value
-		}
-
-			break;
+        //vulkan default changes
+		//case Area:
+		//{
+		//	AreaShader &shader = shState->shaders().area;
+		//	shader.bind();
+		//	shader.applyViewportProj();
+		//	shader.setTranslation(Vec2i());
+		//	shader.setTexSize(Vec2i(size.x, size.y));
+		//	shader.setTargetSize(Vec2(size.x, size.y)); // Dummy value
+		//}
+		//	break;
 		default:
 		{
 			SimpleShader &shader = shState->shaders().simple;
@@ -347,14 +347,14 @@ void blitSource(TEXFBO &source, int scaleIsSpecial)
 
 			break;
 #endif
-		case Area:
-		{
-			AreaShader &shader = shState->shaders().area;
-			shader.bind();
-			shader.setTexSize(Vec2i(blitSrcWidthHires, blitSrcHeightHires));
-		}
-
-			break;
+        //vulkan default changes
+		//case Area:
+		//{
+		//	AreaShader &shader = shState->shaders().area;
+		//	shader.bind();
+		//	shader.setTexSize(Vec2i(blitSrcWidthHires, blitSrcHeightHires));
+		//}
+		//	break;
 		default:
 		{
 			SimpleShader &shader = shState->shaders().simple;
@@ -418,12 +418,13 @@ void blitRectangle(const IntRect &src, const IntRect &dst, bool smooth)
 			shader.setTargetScale(Vec2((float)(shState->config().xbrzScalingFactor), (float)(shState->config().xbrzScalingFactor)));
 		}
 #endif
-		if (method == Area)
-		{
-			AreaShader &shader = shState->shaders().area;
-			// Sometimes the dest height is negative, but the area shader can't handle that, so take abs of it.
-			shader.setTargetSize(Vec2((float)blitSrcWidthHires * (float)scaledDstWidth / (float)scaledSrcWidth, (float)blitSrcHeightHires * (float)abs(scaledDstHeight) / (float)scaledSrcHeight));
-		}
+        //vulkan default changes
+		//if (method == Area)
+		//{
+		//	AreaShader &shader = shState->shaders().area;
+		//	// Sometimes the dest height is negative, but the area shader can't handle that, so take abs of it.
+		//	shader.setTargetSize(Vec2((float)blitSrcWidthHires * (float)scaledDstWidth / (float)scaledSrcWidth, (float)blitSrcHeightHires * (float)abs(scaledDstHeight) / (float)scaledSrcHeight));
+		//}
 		if (smooth)
 			TEX::setSmooth(true);
 
