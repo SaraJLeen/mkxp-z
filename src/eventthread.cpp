@@ -744,7 +744,7 @@ void EventThread::updateCursorState(bool inWindow,
     bool inScreen = inWindow && SDL_PointInRect(&pos, &screen);
     
     if (inScreen)
-        SDL_ShowCursor(showCursor || hideCursorTimerID ? SDL_TRUE : SDL_FALSE);
+        SDL_ShowCursor(!showCursor || !hideCursorTimerID ? SDL_FALSE : SDL_TRUE);
     else
         SDL_ShowCursor(SDL_TRUE);
 }
