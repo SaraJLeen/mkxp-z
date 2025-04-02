@@ -119,7 +119,7 @@ jobs:
           ./cmake-install.sh --skip-license --prefix="$HOME"/cmake
           rm ./cmake-install.sh
           cmake --version
-          "$HOME"/cmake --version
+          "$HOME"/cmake/cmake --version
 
       - name: Build everything else
         run: |
