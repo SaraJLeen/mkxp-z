@@ -117,6 +117,7 @@ jobs:
           mkdir "$HOME"/cmake
           ./cmake-install.sh --skip-license --prefix="$HOME"/cmake
           rm ./cmake-install.sh
+          cmake --version
 
       - name: Build everything else
         run: |
