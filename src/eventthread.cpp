@@ -173,6 +173,11 @@ void EventThread::process(RGSSThreadData &rtData)
         fps.sendUpdates.set();
 
     bool cursorInWindow = false;
+    SDL_Window *window = SDL_GetMouseFocus();
+    if(window != NULL) {
+      cursorInWindow = true;
+      mouseState.inWindow = true;
+    }
     /* Will be updated eventually */
     SDL_Rect gameScreen = { 0, 0, 0, 0 };
     
