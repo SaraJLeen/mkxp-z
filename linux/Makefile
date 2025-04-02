@@ -51,7 +51,7 @@ RUBY_CONFIGURE_ARGS := \
 
 CONFIGURE := $(CONFIGURE_ENV) ./configure $(CONFIGURE_ARGS)
 AUTOGEN   := $(CONFIGURE_ENV) ./autogen.sh $(CONFIGURE_ARGS)
-CMAKE     := $(CONFIGURE_ENV) "$HOME"/cmake/bin/cmake .. $(CMAKE_ARGS)
+CMAKE     := $(CONFIGURE_ENV) "${HOME}"/cmake/bin/cmake .. $(CMAKE_ARGS)
 
 default: everything
 
