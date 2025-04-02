@@ -112,6 +112,7 @@ jobs:
 
       - name: Install CMake
         run: |
+          sudo apt remove cmake
           wget -q -O ./cmake-install.sh https://github.com/Kitware/CMake/releases/download/v${{ env.CMAKE_VERSION }}/cmake-${{ env.CMAKE_VERSION }}-Linux-x86_64.sh 
           chmod u+x ./cmake-install.sh
           mkdir "$HOME"/cmake
