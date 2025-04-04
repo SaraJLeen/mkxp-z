@@ -157,10 +157,10 @@ jobs:
             arch_debian: armhf
             arch_gcc: arm-linux-gnueabihf
             experimental: false
-          - arch_mkxpz: armv7-neon
-            arch_debian: armhf
-            arch_gcc: arm-linux-gnueabihf
-            experimental: false
+#          - arch_mkxpz: armv7-neon
+#            arch_debian: armhf
+#            arch_gcc: arm-linux-gnueabihf
+#            experimental: false
           - arch_mkxpz: arm64
             arch_debian: arm64
             arch_gcc: aarch64-linux-gnu
