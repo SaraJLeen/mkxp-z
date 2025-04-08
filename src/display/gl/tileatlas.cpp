@@ -40,7 +40,7 @@ typedef std::vector<Column> ColumnVec;
 /* Buffer between autotile area and tileset */
 static const int atBuffer = 32;
 /* Autotile area width */
-static const int atAreaW = 32*3*8;
+static const int atAreaW = 32*3*64;	//Max autotile frames - 64 - Sara
 /* Autotile area height */
 static const int atAreaH = 32*4*7 + atBuffer;
 

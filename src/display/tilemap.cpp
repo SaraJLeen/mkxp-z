@@ -59,7 +59,7 @@ static const int autotileH = 4 * 32;
 
 static const int autotileCount = 7;
 
-static const int atFrames = 8;
+static const int atFrames = 64;	//Max autotile frames - 64 - Sara
 static const int atFrameDur = 15;
 static const int atAreaW = autotileW * atFrames;
 //static const int atAreaH = autotileH * autotileCount;

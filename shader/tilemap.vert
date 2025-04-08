@@ -29,8 +29,8 @@ void main()
 
     lowp int pred = int(tex.x <= atAreaW && tex.y <= atAreaH);
     lowp int frame = int(aniIndex - atFrames[atIndex] * (aniIndex / atFrames[atIndex]));
-    lowp int row = frame / 8;
-    lowp int col = frame - 8 * row;
+    lowp int row = frame / 64;	//Max autotile frames - 64 - Sara
+    lowp int col = frame - 64 * row;	//Max autotile frames - 64 - Sara
     tex.x += atAniOffsetX * float(col * pred);
     tex.y += atAniOffsetY * float(row * pred);
 
