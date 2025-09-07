@@ -24,6 +24,7 @@ CLONE := $(GIT) clone -q
 GITHUB := https://github.com
 
 CONFIGURE_ENV := \
+	CMAKE_POLICY_VERSION_MINIMUM=3.10 \
 	PKG_CONFIG_LIBDIR=$(PKG_CONFIG_LIBDIR) \
 	CC="$(CC)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
@@ -33,7 +34,6 @@ ifdef ARCH_CMAKE_TOOLCHAIN
 	ARCH_CMAKE_ARGS := -DCMAKE_TOOLCHAIN_FILE="${PWD}/$(ARCH_CMAKE_TOOLCHAIN)"
 endif
 CMAKE_ARGS := \
-	-DCMAKE_POLICY_VERSION_MINIMUM=3.10 \
 	-DCMAKE_INSTALL_PREFIX="$(BUILD_PREFIX)" \
 	-DCMAKE_PREFIX_PATH="$(BUILD_PREFIX)" \
 	-DCMAKE_C_FLAGS="$(CFLAGS)" \
@@ -77,20 +77,17 @@ $(DOWNLOADS)/theora/autogen.sh:
 # Vorbis
 libvorbis: init_dirs libogg $(LIBDIR)/libvorbis.a
 
-$(LIBDIR)/libvorbis.a: $(LIBDIR)/libogg.a $(DOWNLOADS)/vorbis/Makefile
-	cd $(DOWNLOADS)/vorbis; \
+$(LIBDIR)/libvorbis.a: $(LIBDIR)/libogg.a $(DOWNLOADS)/vorbis/cmakebuild/Makefile
+	cd $(DOWNLOADS)/vorbis/cmakebuild; \
 	make -j$(NPROC); make install
 
-$(DOWNLOADS)/vorbis/Makefile: $(DOWNLOADS)/vorbis/configure
+$(DOWNLOADS)/vorbis/cmakebuild/Makefile: $(DOWNLOADS)/vorbis/CMakeLists.txt
 	cd $(DOWNLOADS)/vorbis; \
-	$(CONFIGURE) --with-ogg=$(BUILD_PREFIX) --enable-shared=false --enable-static=true
+	mkdir cmakebuild; cd cmakebuild; \
+	$(CMAKE) -DBUILD_SHARED_LIBS=no
 
-$(DOWNLOADS)/vorbis/configure: $(DOWNLOADS)/vorbis/autogen.sh
-	cd $(DOWNLOADS)/vorbis; \
-	./autogen.sh
-
-$(DOWNLOADS)/vorbis/autogen.sh:
-	$(CLONE) $(GITHUB)/xiph/vorbis $(DOWNLOADS)/vorbis
+$(DOWNLOADS)/vorbis/CMakeLists.txt:
+	$(CLONE) $(GITHUB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
 
 
 # Ogg, dependency of Vorbis
@@ -288,7 +285,7 @@ $(DOWNLOADS)/openal/cmakebuild/Makefile: $(DOWNLOADS)/openal/CMakeLists.txt
 	$(CMAKE) -DLIBTYPE=STATIC -DALSOFT_EXAMPLES=no -DALSOFT_UTILS=no $(OPENAL_FLAGS)
 
 $(DOWNLOADS)/openal/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/mkxp-z/openal-soft $(DOWNLOADS)/openal
+	$(CLONE) $(GITHUB)/kcat/openal-soft -b 1.24.3 $(DOWNLOADS)/openal
 
 # FluidSynth
 fluidsynth: init_dirs $(LIBDIR)/libfluidsynth.a
@@ -299,11 +296,11 @@ $(LIBDIR)/libfluidsynth.a: $(DOWNLOADS)/fluidsynth/cmakebuild/Makefile
 
 $(DOWNLOADS)/fluidsynth/cmakebuild/Makefile: $(DOWNLOADS)/fluidsynth/CMakeLists.txt
 	cd $(DOWNLOADS)/fluidsynth; mkdir cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DBUILD_SHARED_LIBS=no -Denable-sdl2=no -Denable-readline=no
+	$(CMAKE) -DBUILD_SHARED_LIBS=no -Denable-sdl3=no -Denable-readline=no -Dosal=embedded -Denable-libinstpatch=no
 
 $(DOWNLOADS)/fluidsynth/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/mkxp-z/fluidsynth-sans-glib $(DOWNLOADS)/fluidsynth
-	sed -i 's/"$${CMAKE_COMMAND}" -D/"$${CMAKE_COMMAND}" -DCMAKE_POLICY_VERSION_MINIMUM=3.10 -D/g' $(DOWNLOADS)/fluidsynth/src/CMakeLists.txt
+	$(CLONE) $(GITHUB)/FluidSynth/fluidsynth --recurse-submodules $(DOWNLOADS)/fluidsynth; \
+	cd $(DOWNLOADS)/fluidsynth; git checkout a8c8a4f28c617ddda0519d51350901b75d75882e
 
 # OpenSSL
 openssl: init_dirs $(LIBDIR)/libssl.a
@@ -328,10 +325,12 @@ $(LIBDIR)/libruby.so.3.1: $(DOWNLOADS)/ruby/Makefile
 	cd $(DOWNLOADS)/ruby; \
 	make -j$(NPROC); make install DESTDIR="$(BUILD_PREFIX)"
 
+# -std=gnu99 is needed with GCC 15 and higher (which default to gnu23), for Ruby versions that aren't valid C23.
+# Ruby versions that are valid C23 are 3.2.9+, 3.3.9+, 3.4.5+, and 3.5.0+.
 $(DOWNLOADS)/ruby/Makefile: $(DOWNLOADS)/ruby/configure
 	cd $(DOWNLOADS)/ruby; \
 	export $(CONFIGURE_ENV); \
-	export CFLAGS="-flto $$CFLAGS"; \
+	export CFLAGS="-std=gnu99 -flto $$CFLAGS"; \
 	export LDFLAGS="-flto $$LDFLAGS"; \
 	./configure $(CONFIGURE_ARGS) $(RUBY_CONFIGURE_ARGS) $(RUBY_FLAGS)
 
