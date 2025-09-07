@@ -155,10 +155,10 @@ jobs:
             arch_debian: armhf
             arch_gcc: arm-linux-gnueabihf
             experimental: false
-          - arch_mkxpz: armv7-neon
-            arch_debian: armhf
-            arch_gcc: arm-linux-gnueabihf
-            experimental: false
+#          - arch_mkxpz: armv7-neon
+#            arch_debian: armhf
+#            arch_gcc: arm-linux-gnueabihf
+#            experimental: false
           - arch_mkxpz: arm64
             arch_debian: arm64
             arch_gcc: aarch64-linux-gnu
@@ -175,12 +175,12 @@ jobs:
             arch_debian: s390x
             arch_gcc: s390x-linux-gnu
             experimental: false
-          - arch_mkxpz: riscv64
-            arch_debian: riscv64
-            arch_gcc: riscv64-linux-gnu
+#          - arch_mkxpz: riscv64
+#            arch_debian: riscv64
+#            arch_gcc: riscv64-linux-gnu
             # libjxl/highway compatibility issue, TODO check if fixed in later SDL_image.
             # Also probably an OpenSSL arch name issue, which might be fixed by now.
-            experimental: true
+#            experimental: true
     steps:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
@@ -314,18 +314,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - arch_mkxpz: armv6
-            arch_debian: armhf
-            arch_gcc: arm-linux-gnueabihf
-            experimental: false
-          - arch_mkxpz: armv7
-            arch_debian: armhf
-            arch_gcc: arm-linux-gnueabihf
-            experimental: false
-          - arch_mkxpz: armv7-neon
-            arch_debian: armhf
-            arch_gcc: arm-linux-gnueabihf
-            experimental: false
+#          - arch_mkxpz: armv6
+#            arch_debian: armhf
+#            arch_gcc: arm-linux-gnueabihf
+#            experimental: false
+#          - arch_mkxpz: armv7
+#            arch_debian: armhf
+#            arch_gcc: arm-linux-gnueabihf
+#            experimental: false
+#          - arch_mkxpz: armv7-neon
+#            arch_debian: armhf
+#            arch_gcc: arm-linux-gnueabihf
+#            experimental: false
           - arch_mkxpz: arm64
             arch_debian: arm64
             arch_gcc: aarch64-linux-gnu
@@ -342,12 +342,12 @@ jobs:
             arch_debian: s390x
             arch_gcc: s390x-linux-gnu
             experimental: false
-          - arch_mkxpz: riscv64
-            arch_debian: riscv64
-            arch_gcc: riscv64-linux-gnu
+#          - arch_mkxpz: riscv64
+#            arch_debian: riscv64
+#            arch_gcc: riscv64-linux-gnu
             # libjxl/highway compatibility issue, TODO check if fixed in later SDL_image.
             # Also probably an OpenSSL arch name issue, which might be fixed by now.
-            experimental: true
+#            experimental: true
     steps:
       - uses: benjlevesque/short-sha@v2.2
         id: short-sha
@@ -403,53 +403,53 @@ jobs:
           name: mkxp-z.linux.debian.trixie.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/local
 
-  build-macos:
-    name: macOS
-    runs-on: macos-latest
-    steps:
-      - uses: benjlevesque/short-sha@v2.2
-        id: short-sha
-        with:
-          length: 7
+#  build-macos:
+#    name: macOS
+#    runs-on: macos-latest
+#    steps:
+#      - uses: benjlevesque/short-sha@v2.2
+#        id: short-sha
+#        with:
+#          length: 7
 
-      - name: Remove pre-existing homebrew packages
-        run: brew remove --force $(brew list)
+#      - name: Remove pre-existing homebrew packages
+#        run: brew remove --force $(brew list)
 
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#      - name: Checkout repository
+#        uses: actions/checkout@v4
 
-      - uses: actions/cache@v4
-        with:
-          path: |
-            macos/Dependencies/build-macosx-x86_64
-            macos/Dependencies/build-macosx-arm64
-            macos/Dependencies/build-macosx-universal
-            macos/Dependencies/downloads
-          key: mac-${{ hashFiles('macos/Dependencies/*.make', 'macos/Dependencies/*.sh') }}
+#      - uses: actions/cache@v4
+#        with:
+#          path: |
+#            macos/Dependencies/build-macosx-x86_64
+#            macos/Dependencies/build-macosx-arm64
+#            macos/Dependencies/build-macosx-universal
+#            macos/Dependencies/downloads
+#          key: mac-${{ hashFiles('macos/Dependencies/*.make', 'macos/Dependencies/*.sh') }}
 
-      - name: Install Homebrew tools
-        run: |
-          cd macos/Dependencies
-          brew bundle
+#      - name: Install Homebrew tools
+#        run: |
+#          cd macos/Dependencies
+#          brew bundle
 
-      - name: Build all dependencies
-        run: |
-          cd macos/Dependencies
-          ./setup.sh
+#      - name: Build all dependencies
+#        run: |
+#          cd macos/Dependencies
+#          ./setup.sh
 
-      - name: Build app
-        run: |
-          cd macos
-          xcodebuild -project mkxp-z.xcodeproj -configuration "Release" -scheme "Universal" -derivedDataPath "$GITHUB_WORKSPACE/build"
+#      - name: Build app
+#        run: |
+#          cd macos
+#          xcodebuild -project mkxp-z.xcodeproj -configuration "Release" -scheme "Universal" -derivedDataPath "$GITHUB_WORKSPACE/build"
 
-      - name: Compress app
-        run: |
-          cd build/Build/Products/Release
-          cp ../../../../assets/LICENSE.mkxp-z-with-https.txt ./Z-universal.app/
-          ditto -c -k --sequesterRsrc --keepParent Z-universal.app Z-universal.app.zip
+#      - name: Compress app
+#        run: |
+#          cd build/Build/Products/Release
+#          cp ../../../../assets/LICENSE.mkxp-z-with-https.txt ./Z-universal.app/
+#          ditto -c -k --sequesterRsrc --keepParent Z-universal.app Z-universal.app.zip
 
-      - name: Upload archive
-        uses: actions/upload-artifact@v4
-        with:
-          name: mkxp-z.macos.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
-          path: build/Build/Products/Release/Z-universal.app.zip
+#      - name: Upload archive
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: mkxp-z.macos.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+#          path: build/Build/Products/Release/Z-universal.app.zip
