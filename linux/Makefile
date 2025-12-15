@@ -87,7 +87,7 @@ $(DOWNLOADS)/vorbis/cmakebuild/Makefile: $(DOWNLOADS)/vorbis/CMakeLists.txt
 	$(CMAKE) -DBUILD_SHARED_LIBS=no
 
 $(DOWNLOADS)/vorbis/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/mkxp-z/vorbis $(DOWNLOADS)/vorbis
+	$(CLONE) $(GITHUB)/xiph/vorbis -b v1.3.7 $(DOWNLOADS)/vorbis
 
 
 # Ogg, dependency of Vorbis
@@ -105,7 +105,7 @@ $(DOWNLOADS)/ogg/configure: $(DOWNLOADS)/ogg/autogen.sh
 	cd $(DOWNLOADS)/ogg; ./autogen.sh
 
 $(DOWNLOADS)/ogg/autogen.sh:
-	$(CLONE) $(GITHUB)/mkxp-z/ogg $(DOWNLOADS)/ogg
+	$(CLONE) $(GITHUB)/xiph/ogg -b v1.3.6 $(DOWNLOADS)/ogg
 
 # Pixman
 pixman: init_dirs libpng $(LIBDIR)/libpixman-1.a
@@ -120,25 +120,25 @@ $(DOWNLOADS)/pixman/Makefile: $(DOWNLOADS)/pixman/autogen.sh
 	$(AUTOGEN) --enable-static=yes --enable-shared=no
 
 $(DOWNLOADS)/pixman/autogen.sh:
-	$(CLONE) $(GITHUB)/mkxp-z/pixman $(DOWNLOADS)/pixman
+	$(CLONE) https://gitlab.freedesktop.org/pixman/pixman -b pixman-0.42.2 $(DOWNLOADS)/pixman
 
 
 # iconv
 iconv: init_dirs $(LIBDIR)/libiconv.a
 
-$(LIBDIR)/libiconv.a: $(DOWNLOADS)/libiconv-1.16/Makefile
-	cd $(DOWNLOADS)/libiconv-1.16; make; make install
+$(LIBDIR)/libiconv.a: $(DOWNLOADS)/libiconv-1.18/Makefile
+	cd $(DOWNLOADS)/libiconv-1.18; make; make install
 
-$(DOWNLOADS)/libiconv-1.16/Makefile: $(DOWNLOADS)/libiconv-1.16/configure
-	cd $(DOWNLOADS)/libiconv-1.16; \
+$(DOWNLOADS)/libiconv-1.18/Makefile: $(DOWNLOADS)/libiconv-1.18/configure
+	cd $(DOWNLOADS)/libiconv-1.18; \
 	$(CONFIGURE) --enable-static=true --enable-shared=false
 
-$(DOWNLOADS)/libiconv-1.16/configure: $(DOWNLOADS)/libiconv-1.16.tar.gz
+$(DOWNLOADS)/libiconv-1.18/configure: $(DOWNLOADS)/libiconv-1.18.tar.gz
 	cd $(DOWNLOADS); \
-	tar -xzf libiconv-1.16.tar.gz;
+	tar -xzf libiconv-1.18.tar.gz;
 
-$(DOWNLOADS)/libiconv-1.16.tar.gz:
-	wget https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.16.tar.gz -P $(DOWNLOADS)
+$(DOWNLOADS)/libiconv-1.18.tar.gz:
+	wget https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.18.tar.gz -P $(DOWNLOADS)
 
 # uchardet
 uchardet: init_dirs $(LIBDIR)/libuchardet.a
@@ -153,7 +153,7 @@ $(DOWNLOADS)/uchardet/cmakebuild/Makefile: $(DOWNLOADS)/uchardet/CMakeLists.txt
 	$(CMAKE) -DBUILD_SHARED_LIBS=no
 
 $(DOWNLOADS)/uchardet/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/mkxp-z/uchardet $(DOWNLOADS)/uchardet
+	$(CLONE) https://gitlab.freedesktop.org/uchardet/uchardet -b v0.0.8 $(DOWNLOADS)/uchardet
 
 
 # PhysFS
@@ -170,7 +170,7 @@ $(DOWNLOADS)/physfs/cmakebuild/Makefile: $(DOWNLOADS)/physfs/CMakeLists.txt
 	$(CMAKE) -DPHYSFS_BUILD_STATIC=true -DPHYSFS_BUILD_SHARED=false
 
 $(DOWNLOADS)/physfs/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/mkxp-z/physfs -b release-3.2.0 $(DOWNLOADS)/physfs
+	$(CLONE) $(GITHUB)/icculus/physfs -b release-3.2.0 $(DOWNLOADS)/physfs
 
 # libpng
 libpng: init_dirs $(LIBDIR)/libpng.a
@@ -185,7 +185,7 @@ $(DOWNLOADS)/libpng/Makefile: $(DOWNLOADS)/libpng/configure
 	--enable-shared=no --enable-static=yes
 
 $(DOWNLOADS)/libpng/configure:
-	$(CLONE) $(GITHUB)/mkxp-z/libpng $(DOWNLOADS)/libpng
+	$(CLONE) $(GITHUB)/pnggroup/libpng -b v1.6.50 $(DOWNLOADS)/libpng
 
 # SDL2
 sdl2: init_dirs $(LIBDIR)/libSDL2.a
@@ -296,11 +296,10 @@ $(LIBDIR)/libfluidsynth.a: $(DOWNLOADS)/fluidsynth/cmakebuild/Makefile
 
 $(DOWNLOADS)/fluidsynth/cmakebuild/Makefile: $(DOWNLOADS)/fluidsynth/CMakeLists.txt
 	cd $(DOWNLOADS)/fluidsynth; mkdir cmakebuild; cd cmakebuild; \
-	$(CMAKE) -DBUILD_SHARED_LIBS=no -Denable-sdl3=no -Denable-readline=no -Dosal=embedded -Denable-libinstpatch=no
+	$(CMAKE) -DBUILD_SHARED_LIBS=no -Denable-sdl3=no -Denable-readline=no -Dosal=embedded -Denable-libinstpatch=no -Denable-jack=no -Denable-portaudio=no -Denable-libsndfile=no -Denable-systemd=no -Denable-dbus=no
 
 $(DOWNLOADS)/fluidsynth/CMakeLists.txt:
-	$(CLONE) $(GITHUB)/FluidSynth/fluidsynth --recurse-submodules $(DOWNLOADS)/fluidsynth; \
-	cd $(DOWNLOADS)/fluidsynth; git checkout a8c8a4f28c617ddda0519d51350901b75d75882e
+	$(CLONE) $(GITHUB)/FluidSynth/fluidsynth -b v2.5.0 --recurse-submodules $(DOWNLOADS)/fluidsynth
 
 # OpenSSL
 openssl: init_dirs $(LIBDIR)/libssl.a

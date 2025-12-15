@@ -3099,6 +3099,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
+					"$(DEPENDENCY_SEARCH_PATH)/include/freetype2",
 					/* vulkan default changes */
 					/* "$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE", */
 					"../vendor/ANGLE",
@@ -3190,6 +3191,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
+					"$(DEPENDENCY_SEARCH_PATH)/include/freetype2",
 					/* vulkan default changes */
 					/* "$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE", */
 					"../vendor/ANGLE",
@@ -3280,6 +3282,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
+					"$(DEPENDENCY_SEARCH_PATH)/include/freetype2",
 					/* vulkan default changes */
 					/* "$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE", */
 					"../vendor/ANGLE",
@@ -3365,6 +3368,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
+					"$(DEPENDENCY_SEARCH_PATH)/include/freetype2",
 					/* vulkan default changes */
 					/* "$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE", */
 					"../vendor/ANGLE",
@@ -3584,6 +3588,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
+					"$(DEPENDENCY_SEARCH_PATH)/include/freetype2",
 					/* vulkan default changes */
 					/* "$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE", */
 					"../vendor/ANGLE",
@@ -3656,6 +3661,7 @@
 					"$(DEPENDENCY_SEARCH_PATH)/include/AL",
 					"$(DEPENDENCY_SEARCH_PATH)/include/openssl",
 					"$(DEPENDENCY_SEARCH_PATH)/include/uchardet",
+					"$(DEPENDENCY_SEARCH_PATH)/include/freetype2",
 					/* vulkan default changes */
 					/* "$(PROJECT_DIR)/Dependencies/Frameworks/ANGLE", */
 					"../vendor/ANGLE",
