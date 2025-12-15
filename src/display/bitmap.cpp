@@ -2165,18 +2165,6 @@ void Bitmap::drawText(const IntRect &rect, const char *str, int align)
     const Color &fontColor = p->font->getColor();
     const Color &outColor = p->font->getOutColor();
     
-    // RGSS crops the the text slightly if there's an outline
-    int scaledOutlineSize = 0;
-    if (p->font->getOutline()) {
-        // Handle high-res for outline.
-        if (p->selfLores) {
-            scaledOutlineSize = OUTLINE_SIZE * width() / p->selfLores->width();
-        } else {
-            scaledOutlineSize = OUTLINE_SIZE;
-        }
-    }
-    int doubleOutlineSize = scaledOutlineSize * 2;
-    
     SDL_Color c = fontColor.toSDLColor();
     
     if (c.a == 0)
