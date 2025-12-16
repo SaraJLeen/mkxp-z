@@ -523,8 +523,30 @@ _TTF_Font *SharedFontState::getFont(std::string family,
 		/* Dirty hack to get the FT_Face.
 		 * SDL_ttf will probably never move it from the beginning of the struct. */
 		FT_Face face= *(reinterpret_cast<FT_Face *>( font ));
+		/* Special exception to let Corpse Party look right - Sara */
+		if (family.compare("perfect dos vga 437")==0)
+		{
+			if (ppem == 0)
+			{
+				Font_Container c = { 0 };
+				c.font = font;
+				c.ppem = load_VDMX(&c, size);
+				if (!c.ppem)
+					c.ppem = calc_ppem_for_height( &c, size );
+
+				//ppem = std::max<int>(c.ppem * p->fontScale, 1);
+				//ppemMult = std::max<int>(ppem * hiresMult, 1);
+				ppem = std::max<int>(size * p->fontScale, 5);
+				ppemMult = std::max<int>(ppem * hiresMult, 1);
+			}
+			if (TTF_SetFontSize(font, ppemMult))
+			{
+				TTF_CloseFont(font);
+				font = 0;
+			}
+		} else
 		/* This is should always be true, but we may as well check... */
-		if (FT_IS_SCALABLE( face ))
+		if (FT_IS_SCALABLE( face )) // Special exception to let Corpse Party look right
 		{
 			if (ppem == 0)
 			{
