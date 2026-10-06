@@ -227,7 +227,7 @@ static void _blitBegin(FBO::ID fbo, const Vec2i &size, int scaleIsSpecial)
 		}
 
 			break;
-#ifdef MKXPZ_SSL
+#ifdef MKXPZ_HAVE_EXTRA_SHADERS
 		case xBRZ:
 		{
 			XbrzShader &shader = shState->shaders().xbrz;
@@ -240,17 +240,6 @@ static void _blitBegin(FBO::ID fbo, const Vec2i &size, int scaleIsSpecial)
 
 			break;
 #endif
-        //vulkan default changes
-		//case Area:
-		//{
-		//	AreaShader &shader = shState->shaders().area;
-		//	shader.bind();
-		//	shader.applyViewportProj();
-		//	shader.setTranslation(Vec2i());
-		//	shader.setTexSize(Vec2i(size.x, size.y));
-		//	shader.setTargetSize(Vec2(size.x, size.y)); // Dummy value
-		//}
-		//	break;
 		default:
 		{
 			SimpleShader &shader = shState->shaders().simple;
@@ -337,7 +326,7 @@ void blitSource(TEXFBO &source, int scaleIsSpecial)
 		}
 
 			break;
-#ifdef MKXPZ_SSL
+#ifdef MKXPZ_HAVE_EXTRA_SHADERS
 		case xBRZ:
 		{
 			XbrzShader &shader = shState->shaders().xbrz;
@@ -347,14 +336,6 @@ void blitSource(TEXFBO &source, int scaleIsSpecial)
 
 			break;
 #endif
-        //vulkan default changes
-		//case Area:
-		//{
-		//	AreaShader &shader = shState->shaders().area;
-		//	shader.bind();
-		//	shader.setTexSize(Vec2i(blitSrcWidthHires, blitSrcHeightHires));
-		//}
-		//	break;
 		default:
 		{
 			SimpleShader &shader = shState->shaders().simple;
@@ -411,20 +392,13 @@ void blitRectangle(const IntRect &src, const IntRect &dst, bool smooth)
 		}
 		int method = smoothScalingMethod(scaleIsSpecial);
 
-#ifdef MKXPZ_SSL
+#ifdef MKXPZ_HAVE_EXTRA_SHADERS
 		if (method == xBRZ)
 		{
 			XbrzShader &shader = shState->shaders().xbrz;
 			shader.setTargetScale(Vec2((float)(shState->config().xbrzScalingFactor), (float)(shState->config().xbrzScalingFactor)));
 		}
 #endif
-        //vulkan default changes
-		//if (method == Area)
-		//{
-		//	AreaShader &shader = shState->shaders().area;
-		//	// Sometimes the dest height is negative, but the area shader can't handle that, so take abs of it.
-		//	shader.setTargetSize(Vec2((float)blitSrcWidthHires * (float)scaledDstWidth / (float)scaledSrcWidth, (float)blitSrcHeightHires * (float)abs(scaledDstHeight) / (float)scaledSrcHeight));
-		//}
 		if (smooth)
 			TEX::setSmooth(true);
 

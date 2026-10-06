@@ -1224,6 +1224,8 @@ void Input::update()
     p->mousePos[1] = shState->eThread().mouseState.y;
     p->mouseInWindow = shState->eThread().mouseState.inWindow;
     
+    /* Fetch new cumulative scroll distance and reset counter */
+    p->vScrollDistance = SDL_AtomicSet(&EventThread::verticalScrollDistance, 0);
     
     /* Check for new repeating key */
     if (repeatCand != None && repeatCand != p->repeating)
@@ -1257,9 +1259,6 @@ void Input::update()
     }
     
     p->repeating = None;
-    
-    /* Fetch new cumulative scroll distance and reset counter */
-    p->vScrollDistance = SDL_AtomicSet(&EventThread::verticalScrollDistance, 0);
     
     p->last_update = shState->runTime();
 }
