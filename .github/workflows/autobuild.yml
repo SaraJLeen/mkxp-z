@@ -97,12 +97,12 @@ jobs:
           rm dist.tar.gz
           tar -C dist --mtime=@$(git show --no-patch --format=%ct) --sort=name --format=posix --mode=a=rX,u+w --owner=0 --group=0 --numeric-owner --pax-option=exthdr.name=%d/PaxHeaders/%f,delete=atime,delete=ctime -cf dist.tar "$(ls dist)"
           zstd --rm -T0 --ultra -20 dist.tar
-          mv dist.tar.zst mkxp-z.${{ matrix.artifact-name }}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}.tar.zst
+          mv dist.tar.zst Game.${{ matrix.artifact-name }}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}.tar.zst
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          path: mkxp-z.${{ matrix.artifact-name }}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}.tar.zst
+          path: Game.${{ matrix.artifact-name }}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}.tar.zst
           archive: false
 
   build-windows-msys2:
@@ -175,7 +175,7 @@ jobs:
       - name: Prepare artifact
         shell: msys2 {0}
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Check for DLLs missing from the artifact
         shell: msys2 {0}
@@ -209,7 +209,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.windows.msys2.x86_64.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.windows.msys2.x86_64.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: |
             build/artifact/*.dll
             build/artifact/*.exe
@@ -314,12 +314,12 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.windows.cross.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.windows.cross.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact
 
   build-linux-gnu:
@@ -581,12 +581,12 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.linux.${{ matrix.distro }}.${{ matrix.suite }}.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.linux.${{ matrix.distro }}.${{ matrix.suite }}.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact
 
   build-linux-native-container:
@@ -655,12 +655,12 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.linux.debian.trixie.x86_64.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.linux.debian.trixie.x86_64.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact
 
   build-linux-cross-container:
@@ -765,12 +765,12 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.linux.debian.trixie.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.linux.debian.trixie.${{matrix.arch_mkxpz}}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact
 
   build-freebsd:
@@ -984,12 +984,12 @@ jobs:
 
       - name: Prepare artifact
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Upload artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.freebsd.${{ matrix.arch }}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.freebsd.${{ matrix.arch }}.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact
 
   build-macos:
@@ -1060,20 +1060,20 @@ jobs:
 
       - name: Prepare artifacts
         run: |
-          meson install -C build --no-rebuild --tags mkxp-z-bundle
+          meson install -C build --no-rebuild --tags Game-bundle
           mv build/artifact build/artifact-bundle
-          meson install -C build --no-rebuild --tags mkxp-z
+          meson install -C build --no-rebuild --tags Game
 
       - name: Upload standalone artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.macos.${{ matrix.arch_mkxpz }}.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.${{ matrix.arch_mkxpz }}.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact
 
       - name: Upload bundle artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.macos.${{ matrix.arch_mkxpz }}.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.${{ matrix.arch_mkxpz }}.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: build/artifact-bundle
 
   build-macos-universal:
@@ -1089,50 +1089,50 @@ jobs:
       - name: Download arm64 standalone artifact
         uses: actions/download-artifact@v8
         with:
-          name: mkxp-z.macos.arm64.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.arm64.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact-arm64
 
       - name: Download arm64 bundle artifact
         uses: actions/download-artifact@v8
         with:
-          name: mkxp-z.macos.arm64.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.arm64.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact-bundle-arm64
 
       - name: Download x86_64 standalone artifact
         uses: actions/download-artifact@v8
         with:
-          name: mkxp-z.macos.x86_64.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.x86_64.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact-x86_64
 
       - name: Download x86_64 bundle artifact
         uses: actions/download-artifact@v8
         with:
-          name: mkxp-z.macos.x86_64.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.x86_64.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact-bundle-x86_64
 
       - name: Build
         run: |
-          lipo artifact-arm64/mkxp-z.aarch64 artifact-x86_64/mkxp-z.x86_64 -output mkxp-z.universal -create
+          lipo artifact-arm64/Game.aarch64 artifact-x86_64/Game.x86_64 -output Game.universal -create
           cp -p -R artifact-arm64/* artifact-x86_64/
           mv artifact-x86_64 artifact
-          rm artifact/mkxp-z.aarch64
-          rm artifact/mkxp-z.x86_64
-          mv mkxp-z.universal artifact/
-          lipo artifact-bundle-arm64/mkxp-z.aarch64.app/Contents/MacOS/bundle_mkxp-z artifact-bundle-x86_64/mkxp-z.x86_64.app/Contents/MacOS/bundle_mkxp-z -output bundle_mkxp-z -create
-          mv artifact-bundle-arm64/mkxp-z.aarch64.app artifact-bundle-arm64/mkxp-z.universal.app
-          mv artifact-bundle-x86_64/mkxp-z.x86_64.app artifact-bundle-x86_64/mkxp-z.universal.app
+          rm artifact/Game.aarch64
+          rm artifact/Game.x86_64
+          mv Game.universal artifact/
+          lipo artifact-bundle-arm64/Game.aarch64.app/Contents/MacOS/bundle_Game artifact-bundle-x86_64/Game.x86_64.app/Contents/MacOS/bundle_Game -output bundle_Game -create
+          mv artifact-bundle-arm64/Game.aarch64.app artifact-bundle-arm64/Game.universal.app
+          mv artifact-bundle-x86_64/Game.x86_64.app artifact-bundle-x86_64/Game.universal.app
           cp -p -R artifact-bundle-arm64/* artifact-bundle-x86_64/
           mv artifact-bundle-x86_64 artifact-bundle
-          mv bundle_mkxp-z artifact-bundle/mkxp-z.universal.app/Contents/MacOS/
+          mv bundle_Game artifact-bundle/Game.universal.app/Contents/MacOS/
 
       - name: Upload standalone artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.macos.universal.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.universal.standalone.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact
 
       - name: Upload bundle artifact
         uses: actions/upload-artifact@v7
         with:
-          name: mkxp-z.macos.universal.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
+          name: Game.macos.universal.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact-bundle
