@@ -1136,3 +1136,63 @@ jobs:
         with:
           name: Game.macos.universal.app.${{github.event_name == 'pull_request' && format('PR{0}', github.event.number) || github.ref_name}}-${{steps.short-sha.outputs.sha}}
           path: artifact-bundle
+
+  release:
+    name: Create GitHub release
+    runs-on: ubuntu-latest
+    needs:
+      - verify-ruby-configure-scripts
+      - build-source-tarball
+      - build-windows-msys2
+      - build-windows-cross
+      - build-linux-gnu
+      - build-linux-native-container
+      - build-linux-cross-container
+      - build-freebsd
+      - build-macos
+      - build-macos-universal
+    if: ${{ !cancelled() && github.event_name != 'pull_request' }}
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ github.ref_name }}-build-${{ github.run_number }}
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v8
+        with:
+          path: artifacts
+
+      - name: Package artifacts
+        id: package
+        run: |
+          mkdir -p artifacts release
+          shopt -s nullglob
+          for entry in artifacts/*
+          do
+            name="$(basename "$entry")"
+            if [ -f "$entry" ]
+            then
+              mv "$entry" release/
+            elif [ -f "$entry/$name" ] && [ "$(ls -A "$entry" | wc -l)" -eq 1 ]
+            then
+              mv "$entry/$name" release/
+            else
+              (cd "$entry" && zip -9 -r -q -y "$GITHUB_WORKSPACE/release/$name.zip" .)
+            fi
+          done
+          ls -la release
+          if [ -n "$(ls -A release)" ]
+          then
+            echo has-files=true >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Publish GitHub release
+        if: ${{ steps.package.outputs.has-files == 'true' }}
+        run: |
+          gh release delete "$TAG" --cleanup-tag --yes || true
+          gh release create "$TAG" release/* \
+            --target "$GITHUB_SHA" \
+            --title "${{ github.ref_name }} build ${{ github.run_number }} (${GITHUB_SHA::7})" \
+            --notes ''
