@@ -892,7 +892,7 @@ struct TilemapPrivate
 			tilemapShader.setTone(tone->norm);
 			tilemapShader.setColor(color->norm);
 			tilemapShader.setOpacity(opacity.norm);
-			tilemapShader.setAniIndex(tiles.aniIdx / (atFrameDur*(shState->graphics().getFrameRate()/40.f)));
+			tilemapShader.setAniIndex(tiles.aniIdx / atFrameDur);
 			tilemapShader.setATFrames(atlas.nATFrames);
 			shaderVar = &tilemapShader;
 		}
