@@ -156,6 +156,8 @@ RB_METHOD(_kernelCaller);
 RB_METHOD(mkxpStringToUTF8);
 RB_METHOD(mkxpStringToUTF8Bang);
 
+RB_METHOD(mkxpBinary); //Sara
+
 VALUE json2rb(json5pp::value const &v);
 json5pp::value rb2json(VALUE v);
 
@@ -267,6 +269,9 @@ static void mriBindingInit() {
     _rb_define_module_function(cmod, "[]", mkxpGetJSONSetting);
     _rb_define_module_function(cmod, "[]=", mkxpSetJSONSetting);
     _rb_define_module_function(cmod, "to_hash", mkxpGetAllJSONSettings);
+
+    //For use with launching subgames or batch files -- Sara
+    _rb_define_module_function(mod, "binary", mkxpBinary);
     
     /* Load global constants */
     rb_gv_set("MKXP", Qtrue);
@@ -934,6 +939,12 @@ RB_METHOD(_kernelCaller) {
     rb_funcall2(rb_ary_entry(trace, len - 1), rb_intern("gsub!"), 2, args);
     
     return trace;
+}
+
+// Gives the binary filename from argv0 -- Sara
+RB_METHOD(mkxpBinary) {
+    RB_UNUSED_PARAM;
+    return rb_utf8_str_new_cstr(shState->rtData().argv0);
 }
 
 VALUE kernelLoadDataInt(const char *filename, bool rubyExc, bool raw);
